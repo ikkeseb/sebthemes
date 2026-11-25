@@ -1,0 +1,47 @@
+# Seb Lode: an original Omarchy theme made for Seb (seb-lode).
+# A black landscape with metal running through it: matte black dunes and folds, every crest
+# traced by one hair-thin seam of gold that cools to copper.
+# Contrast on background (computed by build.py): foreground 16.0:1; lowest of muted, accent, orange and ANSI 6.5:1 (red).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #d98458  copper, the gold in half-shadow
+#   #8fa7bd  cold steel
+#   #5a4326  gold in full shadow, art only
+
+mode = "dark"
+
+# Surfaces
+background = "#0c0a08"
+dark_background = "#090806"
+darker_background = "#060504"
+lighter_background = "#171310"  # the direction's surface, one step lighter
+selection = "#382b15"
+
+# Text
+foreground = "#f0e6d6"
+light_foreground = "#e8decd"
+bright_foreground = "#f8f2eb"
+dark_foreground = "#8c7f6e"
+muted = "#a39480"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#e8b04a"
+red = "#e8705a"
+yellow = "#e8b04a"
+orange = "#d98458"
+green = "#a9bd6e"
+cyan = "#7fc4b4"
+blue = "#86a8cf"
+magenta = "#cf94b4"
+brown = "#724730"
+
+bright_red = "#ed8f7e"
+bright_yellow = "#edc06e"
+bright_green = "#baca8a"
+bright_cyan = "#9bd1c4"
+bright_blue = "#a3bddb"
+bright_magenta = "#dcb0c8"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(e8b04aff) rgba(d98458ff) 45deg"
+hyprland_inactive_border = "rgba(2a231cff)"
