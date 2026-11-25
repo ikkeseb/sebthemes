@@ -1,0 +1,47 @@
+# Seb Chrome: an original Omarchy theme made for Seb (seb-chrome).
+# Everything is liquid mirror: polished metal forms in a dark studio, picking up faint
+# reflections of lilac and aqua light.
+# Contrast on background (computed by build.py): foreground 16.4:1; lowest of muted, accent, orange and ANSI 6.1:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #7fe3f0  aqua reflection
+#   #ff9ec7  pink reflection
+#   #dfe6f2  bare silver
+
+mode = "dark"
+
+# Surfaces
+background = "#0b0d12"
+dark_background = "#080a0e"
+darker_background = "#060609"
+lighter_background = "#151922"  # the direction's surface, one step lighter
+selection = "#2e2c41"
+
+# Text
+foreground = "#e8ecf4"
+light_foreground = "#dee3ec"
+bright_foreground = "#f3f6fa"
+dark_foreground = "#747d8f"
+muted = "#8791a5"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#b9a7ff"
+red = "#ff8fa3"
+yellow = "#f1e3a0"
+orange = "#f8c0b3"
+green = "#8fe6b8"
+cyan = "#7fe3f0"
+blue = "#8fb4ff"
+magenta = "#e0a3ff"
+brown = "#826662"
+
+bright_red = "#ffb8c5"
+bright_yellow = "#f6edc4"
+bright_green = "#b0edcd"
+bright_cyan = "#a4ebf4"
+bright_blue = "#b8cfff"
+bright_magenta = "#eeccff"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(b9a7ffff) rgba(7fe3f0ff) 135deg"
+hyprland_inactive_border = "rgba(1e2430ff)"
