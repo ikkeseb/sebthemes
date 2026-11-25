@@ -58,7 +58,9 @@ installed from git, so they would not reach you anyway.
 branch of the same name with just that theme at its root, which is the shape Omarchy installs and
 updates. To add a theme, add its folder. `gallery/` holds the pictures on this page.
 
-## Credits
+## Licence and credits
+
+MIT ([LICENSE](LICENSE)), all of it but one wallpaper:
 
 The Seb Organic wallpaper is *Organic Glass (dark)* by UnionTech Software Technology (deepin),
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), downscaled to 2560x1440; see
