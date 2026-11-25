@@ -1,0 +1,46 @@
+# Seb Totality: an original Omarchy theme made for Seb (seb-totality).
+# The whole desktop is the two minutes of a total solar eclipse: absolute black, and one thin
+# rim of pale light that everything else answers to.
+# Contrast on background (computed by build.py): foreground 16.3:1; lowest of muted, accent, orange and ANSI 5.9:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #ff6f8f  prominence rose
+#   #8ea6c9  earthshine blue-grey
+
+mode = "dark"
+
+# Surfaces
+background = "#060607"
+dark_background = "#040405"
+darker_background = "#030304"
+lighter_background = "#111114"  # the direction's surface, one step lighter
+selection = "#353026"
+
+# Text
+foreground = "#e9e6e1"
+light_foreground = "#e0ddd8"
+bright_foreground = "#f4f2f0"
+dark_foreground = "#797673"
+muted = "#8d8a86"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#f2d6a2"
+red = "#f0708a"
+yellow = "#f2d6a2"
+orange = "#f8a298"
+green = "#a9c4a0"
+cyan = "#a3c7c9"
+blue = "#8ea6c9"
+magenta = "#c9a0c4"
+brown = "#7f5450"
+
+bright_red = "#f495a8"
+bright_yellow = "#f7e6c6"
+bright_green = "#c0d4b9"
+bright_cyan = "#bdd7d8"
+bright_blue = "#aabcd6"
+bright_magenta = "#d8bad4"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(f2d6a2ff)"
+hyprland_inactive_border = "rgba(1c1c20ff)"
