@@ -1,0 +1,41 @@
+# Publish each folder under themes/ as a branch of its own, holding just that theme at its root:
+# the shape Omarchy installs and `omarchy theme update` pulls. `git subtree split` is
+# deterministic, so each branch only ever moves forward; the push is never forced, and a branch
+# that could not fast-forward fails this run instead of breaking friends' pulls.
+name: theme branches
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: theme-branches
+  cancel-in-progress: false
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: One branch per theme
+        run: |
+          set -euo pipefail
+          for dir in themes/*/; do
+            theme=$(basename "$dir")
+            if [[ ! $theme =~ ^[a-z0-9][a-z0-9._-]*$ || $theme == main ]]; then
+              echo "::error::themes/$theme is not a usable theme name"; exit 1
+            fi
+            sha=$(git subtree split --prefix="themes/$theme")
+            if [[ $(git rev-parse -q --verify "refs/remotes/origin/$theme" || true) == "$sha" ]]; then
+              echo "unchanged  $theme"
+            else
+              git push -q origin "$sha:refs/heads/$theme"
+              echo "published  $theme"
+            fi
+          done
