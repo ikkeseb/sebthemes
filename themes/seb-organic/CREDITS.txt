@@ -1,0 +1,4 @@
+Wallpaper: Organic Glass (dark), UnionTech Software Technology (deepin), CC BY 4.0
+Licence: https://creativecommons.org/licenses/by/4.0/
+https://github.com/linuxdeepin/deepin-wallpapers/blob/master/deepin/organic-glass-dark.jpg
+Downscaled to 2560x1440.

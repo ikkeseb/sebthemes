@@ -1,0 +1,47 @@
+# Seb Taillight: an original Omarchy theme made for Seb (seb-taillight).
+# Night speed: the city is reduced to streaks of red taillight and sodium lamp dragged across a
+# teal-black dark.
+# Contrast on background (computed by build.py): foreground 16.3:1; lowest of muted, accent, orange and ANSI 5.5:1 (accent).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #ffb02e  sodium amber
+#   #2fd3c9  signal teal
+#   #f3f7ff  white-hot core, art only as fill
+
+mode = "dark"
+
+# Surfaces
+background = "#071013"
+dark_background = "#050c0e"
+darker_background = "#04080a"
+lighter_background = "#0f1c20"  # the direction's surface, one step lighter
+selection = "#31171c"
+
+# Text
+foreground = "#e6eef0"
+light_foreground = "#dce5e8"
+bright_foreground = "#f2f6f8"
+dark_foreground = "#6d8388"
+muted = "#7f979d"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#ff3b47"
+red = "#ff4d57"
+yellow = "#ffb84a"
+orange = "#ffb02e"
+green = "#3fd98b"
+cyan = "#2fd3c9"
+blue = "#4aa3ff"
+magenta = "#ff6aa8"
+brown = "#836020"
+
+bright_red = "#ff767e"
+bright_yellow = "#ffc873"
+bright_green = "#61e0a0"
+bright_cyan = "#51dad2"
+bright_blue = "#73b8ff"
+bright_magenta = "#ff93c0"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(ff3b47ff) rgba(ffb02eff) 45deg"
+hyprland_inactive_border = "rgba(16282dff)"

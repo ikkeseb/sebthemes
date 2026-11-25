@@ -1,0 +1,47 @@
+# Seb Squeegee: an original Omarchy theme made for Seb (seb-squeegee).
+# A dark room with one great abstract painting in it: pure pigment dragged in layers across
+# charcoal, and the terminal's colours are the tubes it was painted from.
+# Contrast on background (computed by build.py): foreground 16.0:1; lowest of muted, accent, orange and ANSI 5.9:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #f2553f  cadmium red
+#   #f4d03a  lemon yellow
+#   #4c8ef0  cobalt
+
+mode = "dark"
+
+# Surfaces
+background = "#0e1011"
+dark_background = "#0a0c0d"
+darker_background = "#070808"
+lighter_background = "#181b1d"  # the direction's surface, one step lighter
+selection = "#15372c"
+
+# Text
+foreground = "#ecebe6"
+light_foreground = "#e2e2dd"
+bright_foreground = "#f6f5f2"
+dark_foreground = "#797d7c"
+muted = "#8c908f"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#2fd39a"
+red = "#f2604c"
+yellow = "#f4d03a"
+orange = "#f3923c"
+green = "#2fd39a"
+cyan = "#4cc9d8"
+blue = "#5a9af5"
+magenta = "#d67ad1"
+brown = "#805126"
+
+bright_red = "#f58272"
+bright_yellow = "#f6d961"
+bright_green = "#51daaa"
+bright_cyan = "#6ed3df"
+bright_blue = "#80b2f7"
+bright_magenta = "#e099dc"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(2fd39aff)"
+hyprland_inactive_border = "rgba(22272aff)"

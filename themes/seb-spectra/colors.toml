@@ -1,0 +1,47 @@
+# Seb Spectra: an original Omarchy theme made for Seb (seb-spectra).
+# White light is the only colour there is, until something splits it: a black desktop where
+# colour appears only as exact spectral lines.
+# Contrast on background (computed by build.py): foreground 15.7:1; lowest of muted, accent, orange and ANSI 6.0:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #ff4b4b  red line
+#   #3bea6e  green line
+#   #4d8dff  blue line
+
+mode = "dark"
+
+# Surfaces
+background = "#050507"
+dark_background = "#040405"
+darker_background = "#020204"
+lighter_background = "#101014"  # the direction's surface, one step lighter
+selection = "#373739"
+
+# Text
+foreground = "#dfe2ea"
+light_foreground = "#d6d9e2"
+bright_foreground = "#eff0f4"
+dark_foreground = "#737782"
+muted = "#868b98"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#ffffff"
+red = "#ff4b4b"
+yellow = "#ffd500"
+orange = "#ff9026"
+green = "#3bea6e"
+cyan = "#2ee6e6"
+blue = "#4d8dff"
+magenta = "#c86bff"
+brown = "#824a16"
+
+bright_red = "#ff7474"
+bright_yellow = "#ffdc29"
+bright_green = "#60ee89"
+bright_cyan = "#52eaea"
+bright_blue = "#76a7ff"
+bright_magenta = "#d794ff"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(ff4b4bff) rgba(ffd500ff) rgba(3bea6eff) rgba(2ee6e6ff) rgba(4d8dffff) rgba(c86bffff) 0deg"
+hyprland_inactive_border = "rgba(18181dff)"

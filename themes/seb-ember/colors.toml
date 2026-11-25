@@ -1,0 +1,40 @@
+# Seb Ember: an original Omarchy theme made for Seb.
+# Warm. True neutral black lit by warm whites, amber and an ember-orange accent.
+# Contrast on background: body text >= 7:1, every ANSI colour and muted >= 4.5:1.
+
+mode = "dark"
+
+# Surfaces
+background = "#131313"
+dark_background = "#0e0e0e"
+darker_background = "#0a0a0a"
+lighter_background = "#1e1e1e"
+selection = "#303030"
+
+# Text
+foreground = "#ebe3d7"
+light_foreground = "#cdc4b6"
+bright_foreground = "#fff8ee"
+dark_foreground = "#867e74"
+muted = "#908880"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#ff8a4c"
+red = "#f2685a"
+yellow = "#f3c25e"
+orange = "#ff8a4c"
+green = "#aacb6c"
+cyan = "#7cc3b1"
+blue = "#82a8e0"
+magenta = "#e28bb2"
+brown = "#7a4a30"
+
+bright_red = "#ff8d7f"
+bright_yellow = "#ffd98c"
+bright_green = "#c6e18e"
+bright_cyan = "#a1dccd"
+bright_blue = "#a6c3f0"
+bright_magenta = "#f2adcb"
+
+# Window borders: the accent when active, a quiet tint of the surface when not.
+hyprland_inactive_border = "rgba(3a3836aa)"

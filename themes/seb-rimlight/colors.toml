@@ -1,0 +1,48 @@
+# Seb Rimlight: an original Omarchy theme made for Seb (seb-rimlight).
+# Large smooth forms asleep in the dark, one edge caught by a hot light: a midnight-blue world
+# where the only warm thing on screen is a single coral rim.
+# Contrast on background (computed by build.py): foreground 16.8:1; lowest of muted, accent, orange and ANSI 6.2:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #7c6cff  violet flank
+#   #3d8bff  azure fill light
+#   #ffb199  rim at its hottest
+#   #1b2a6b  ultramarine body, art only
+
+mode = "dark"
+
+# Surfaces
+background = "#070b18"
+dark_background = "#050812"
+darker_background = "#04060c"
+lighter_background = "#101630"  # the direction's surface, one step lighter
+selection = "#391f26"
+
+# Text
+foreground = "#e9edfa"
+light_foreground = "#dfe4f3"
+bright_foreground = "#f4f6fc"
+dark_foreground = "#727c9c"
+muted = "#8590b3"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#ff6f5e"
+red = "#ff6f5e"
+yellow = "#ffc66b"
+orange = "#ffb199"
+green = "#5fd6a0"
+cyan = "#5fd0f0"
+blue = "#5c9dff"
+magenta = "#b08cff"
+brown = "#835e58"
+
+bright_red = "#ff9387"
+bright_yellow = "#ffd694"
+bright_green = "#7fdeb3"
+bright_cyan = "#84dbf3"
+bright_blue = "#85b6ff"
+bright_magenta = "#ccb5ff"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(2a3f9eff) rgba(2a3f9eff) rgba(ff6f5eff) 135deg"
+hyprland_inactive_border = "rgba(161d3dff)"

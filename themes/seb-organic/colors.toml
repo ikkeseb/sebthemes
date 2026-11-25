@@ -1,0 +1,47 @@
+# Seb Organic: an original Omarchy theme made for Seb (seb-organic).
+# A tangle of glowing glass fibres in the dark: a pink-white core, orchid and periwinkle
+# strands, everything else warm black. Built around deepin's Organic Glass (dark), CC BY 4.0.
+# Contrast on background (computed by build.py): foreground 17.0:1; lowest of muted, accent, orange and ANSI 6.4:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #6a91d8  periwinkle fibre
+#   #bb64c0  orchid strand
+#   #fedae7  the core, art only
+
+mode = "dark"
+
+# Surfaces
+background = "#0a0508"
+dark_background = "#080406"
+darker_background = "#050204"
+lighter_background = "#170e17"  # the direction's surface, one step lighter
+selection = "#392331"
+
+# Text
+foreground = "#f3e8f0"
+light_foreground = "#eadfe8"
+bright_foreground = "#f9f3f8"
+dark_foreground = "#86788b"
+muted = "#9c8ca2"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#f79ad6"
+red = "#ff6b8b"
+yellow = "#f5c98a"
+orange = "#fa9a8a"
+green = "#7fd6a8"
+cyan = "#7fd0e6"
+blue = "#7ea2ec"
+magenta = "#e07ad8"
+brown = "#825049"
+
+bright_red = "#ff94ab"
+bright_yellow = "#f8dab0"
+bright_green = "#9ee0bd"
+bright_cyan = "#a1dded"
+bright_blue = "#a2bcf1"
+bright_magenta = "#e89be2"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(f79ad6ff) rgba(6a91d8ff) 135deg"
+hyprland_inactive_border = "rgba(1f1422ff)"

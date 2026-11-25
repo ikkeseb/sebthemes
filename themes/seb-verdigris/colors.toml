@@ -1,0 +1,46 @@
+# Seb Verdigris: an original Omarchy theme made for Seb (seb-verdigris).
+# Metal that has been outdoors for a century: a dark green-black surface where turquoise patina
+# blooms over glints of bare copper.
+# Contrast on background (computed by build.py): foreground 15.8:1; lowest of muted, accent, orange and ANSI 6.0:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #e0895a  bare copper
+#   #a8e6d5  pale patina
+
+mode = "dark"
+
+# Surfaces
+background = "#0a1112"
+dark_background = "#080d0e"
+darker_background = "#050809"
+lighter_background = "#132022"  # the direction's surface, one step lighter
+selection = "#183834"
+
+# Text
+foreground = "#e3ece9"
+light_foreground = "#d9e3e0"
+bright_foreground = "#f1f6f4"
+dark_foreground = "#6d827f"
+muted = "#7e9692"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#4fd6bd"
+red = "#e8735f"
+yellow = "#e0b35a"
+orange = "#e0895a"
+green = "#7fcf8e"
+cyan = "#4fd6bd"
+blue = "#5aa9d6"
+magenta = "#d08fb0"
+brown = "#754d36"
+
+bright_red = "#ed9283"
+bright_yellow = "#e6c37c"
+bright_green = "#9ddaa8"
+bright_cyan = "#70dec9"
+bright_blue = "#7bbade"
+bright_magenta = "#dcacc4"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(4fd6bdff)"
+hyprland_inactive_border = "rgba(1a2b2dff)"
