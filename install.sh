@@ -58,10 +58,13 @@ for theme in "${themes[@]}"; do
   fi
   ours+=("$theme")
   # The active theme runs from a staged copy, which a pull here or by Update > Extra Themes leaves
-  # as it was; setting the theme again stages its new wallpapers.
-  staged="$HOME/.local/state/omarchy/current/theme/backgrounds"
-  if [[ $theme == "$active" && -d $staged ]] && ! diff -rq "$dir/backgrounds" "$staged" >/dev/null 2>&1; then
-    refresh=$theme
+  # as it was; setting the theme again stages its new wallpapers and colours.
+  staged="$HOME/.local/state/omarchy/current/theme"
+  if [[ $theme == "$active" && -d $staged ]]; then
+    for part in backgrounds colors.toml icons.theme; do
+      [[ -e $dir/$part ]] || continue
+      diff -rq "$dir/$part" "$staged/$part" >/dev/null 2>&1 || refresh=$theme
+    done
   fi
 done
 
