@@ -1,0 +1,47 @@
+# Seb Datamosh: an original Omarchy theme made for Seb (seb-datamosh).
+# A beautiful picture that broke: pixels sorted into long streaks and blocks of pure signal
+# colour, frozen at the most elegant moment of the failure.
+# Contrast on background (computed by build.py): foreground 16.5:1; lowest of muted, accent, orange and ANSI 5.6:1 (muted).
+# Generated from specs.toml by build.py; edit there, not here.
+# Support hues from the direction (wallpaper and fills; 'art only' never as text):
+#   #ff3dbd  signal magenta
+#   #8b6bff  ultraviolet
+#   #ffe14d  block yellow
+
+mode = "dark"
+
+# Surfaces
+background = "#09090d"
+dark_background = "#07070a"
+darker_background = "#040406"
+lighter_background = "#14141b"  # the direction's surface, one step lighter
+selection = "#0e343d"
+
+# Text
+foreground = "#e9e9f2"
+light_foreground = "#dfdfea"
+bright_foreground = "#f4f4f8"
+dark_foreground = "#73738a"
+muted = "#8686a0"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#22e0ff"
+red = "#ff4d6d"
+yellow = "#ffe14d"
+orange = "#ff975d"
+green = "#3dff9e"
+cyan = "#22e0ff"
+blue = "#5c8bff"
+magenta = "#ff3dbd"
+brown = "#845035"
+
+bright_red = "#ff768e"
+bright_yellow = "#ffe876"
+bright_green = "#66ffb2"
+bright_cyan = "#4be6ff"
+bright_blue = "#85a8ff"
+bright_magenta = "#ff66cb"
+
+# Window borders; the active one also borders the bar's popups, menus, notifications and lock.
+hyprland_active_border = "rgba(22e0ffff) rgba(ff3dbdff) 0deg"
+hyprland_inactive_border = "rgba(1c1c26ff)"
