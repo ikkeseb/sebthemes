@@ -1,0 +1,40 @@
+# Seb Volt: an original Omarchy theme made for Seb.
+# One bold accent. Graphite near-monochrome, acid lime is the only thing that shouts.
+# Contrast on background: body text >= 7:1, every ANSI colour and muted >= 4.5:1.
+
+mode = "dark"
+
+# Surfaces
+background = "#111214"
+dark_background = "#0c0d0e"
+darker_background = "#08090a"
+lighter_background = "#1b1c1f"
+selection = "#2c2e33"
+
+# Text
+foreground = "#e4e5e8"
+light_foreground = "#c3c5ca"
+bright_foreground = "#ffffff"
+dark_foreground = "#7b7e86"
+muted = "#8b8f97"
+
+# Accent and ANSI colours (black is the background, bright black is muted)
+accent = "#c8f542"
+red = "#ee7a7c"
+yellow = "#f0c66e"
+orange = "#eaa271"
+green = "#c8f542"
+cyan = "#8fc6c6"
+blue = "#8ea7ca"
+magenta = "#baa2d2"
+brown = "#6a5040"
+
+bright_red = "#ff9c9c"
+bright_yellow = "#ffda8e"
+bright_green = "#dcff7c"
+bright_cyan = "#addddd"
+bright_blue = "#abc1e1"
+bright_magenta = "#d2bee6"
+
+# Window borders: the accent when active, a quiet tint of the surface when not.
+hyprland_inactive_border = "rgba(33353aaa)"
