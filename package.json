@@ -1,0 +1,15 @@
+{
+  "name": "sebthemes-tryon",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "build": "node scripts/build-tryon.ts",
+    "build:bundle": "node scripts/build-tryon.ts --bundle"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  }
+}
