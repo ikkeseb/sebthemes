@@ -1,31 +1,5 @@
 :root {
-  --t-bg: #0b0d12;
-  --t-bg-dark: #080a0e;
-  --t-bg-darker: #060609;
-  --t-bg-light: #151922;
-  --t-selection: #2e2c41;
-  --t-fg: #e8ecf4;
-  --t-fg-light: #dee3ec;
-  --t-fg-bright: #f3f6fa;
-  --t-fg-dark: #747d8f;
-  --t-muted: #8791a5;
-  --t-accent: #b9a7ff;
-  --t-red: #ff8fa3;
-  --t-yellow: #f1e3a0;
-  --t-orange: #f8c0b3;
-  --t-green: #8fe6b8;
-  --t-cyan: #7fe3f0;
-  --t-blue: #8fb4ff;
-  --t-magenta: #e0a3ff;
-  --t-brown: #826662;
-  --t-bright-red: #ffb8c5;
-  --t-bright-yellow: #f6edc4;
-  --t-bright-green: #b0edcd;
-  --t-bright-cyan: #a4ebf4;
-  --t-bright-blue: #b8cfff;
-  --t-bright-magenta: #eeccff;
-  --t-active-border: #b9a7ff;
-  --t-inactive-border: #1e2430;
+/*__INITIAL_THEME_VARS__*/
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "CaskaydiaMono Nerd Font", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -34,7 +8,7 @@
 }
 
 html[data-ready="true"] {
-  --theme-dur: 220ms;
+  --theme-dur: 240ms;
 }
 
 *,
@@ -156,7 +130,7 @@ a:focus-visible {
   background: var(--t-bg-dark);
   border: 1px solid color-mix(in srgb, var(--t-fg) 10%, transparent);
   border-radius: 6px;
-  padding: 3px 4px 3px 4px;
+  padding: 3px 4px;
   min-width: 0;
   transition: background-color var(--theme-dur) var(--ease-omarchy), border-color var(--theme-dur) var(--ease-omarchy);
 }
@@ -255,6 +229,12 @@ a:focus-visible {
   display: inline-block;
 }
 
+.copy-btn.is-failed {
+  border-color: var(--t-red);
+  background: color-mix(in srgb, var(--t-red) 16%, var(--t-bg));
+  color: var(--t-red);
+}
+
 .nav-arrows {
   display: inline-flex;
   align-items: center;
@@ -301,10 +281,11 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 2px;
   border: 1px solid color-mix(in srgb, var(--t-fg) 12%, transparent);
   background: var(--t-bg-darker);
   isolation: isolate;
+  touch-action: pan-y;
 }
 
 .wallpaper-stack {
@@ -321,7 +302,7 @@ a:focus-visible {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 340ms var(--ease-omarchy);
+  transition: opacity 360ms var(--ease-omarchy);
   will-change: opacity;
 }
 
@@ -329,23 +310,20 @@ a:focus-visible {
   opacity: 1;
 }
 
-/* ─── Omarchy Waybar ───────────────────────────────────────────────── */
+/* ─── Authentic Omarchy Bar (shell.toml: 26px opaque background) ───── */
 
 .waybar {
   position: relative;
   z-index: 4;
-  height: 28px;
-  padding: 0 12px;
+  height: 26px;
+  padding: 0 10px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  background: color-mix(in srgb, var(--t-bg) 88%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid color-mix(in srgb, var(--t-fg) 7%, transparent);
+  background: var(--t-bg);
+  color: var(--t-fg);
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--t-fg);
   user-select: none;
   flex-shrink: 0;
   transition: background-color var(--theme-dur) var(--ease-omarchy), color var(--theme-dur) var(--ease-omarchy);
@@ -354,27 +332,27 @@ a:focus-visible {
 .waybar-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .omarchy-glyph {
   display: inline-flex;
   align-items: center;
-  color: var(--t-accent);
+  color: var(--t-fg);
 }
 
 .workspaces {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  height: 28px;
+  height: 26px;
 }
 
 .ws-btn {
   position: relative;
-  height: 28px;
-  min-width: 24px;
-  padding: 0 8px;
+  height: 26px;
+  min-width: 22px;
+  padding: 0 7px;
   border: 0;
   background: transparent;
   color: var(--t-muted);
@@ -385,7 +363,7 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   transition: color 140ms ease;
 }
 
@@ -401,11 +379,12 @@ a:focus-visible {
 .ws-btn.is-active::after {
   content: "";
   position: absolute;
-  left: 5px;
-  right: 5px;
+  left: 4px;
+  right: 4px;
   bottom: 0;
   height: 2px;
   background: var(--t-accent);
+  transition: background-color var(--theme-dur) var(--ease-omarchy);
 }
 
 .ws-label-desktop {
@@ -427,11 +406,11 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: var(--t-fg-light);
+  color: var(--t-fg);
   font-variant-numeric: tabular-nums;
 }
 
-.waybar-dot {
+.waybar-sep {
   color: var(--t-fg-dark);
 }
 
@@ -449,112 +428,133 @@ a:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-.tray-stat {
-  color: var(--t-muted);
-}
-
 .tray-batt {
-  color: var(--t-green);
+  color: var(--t-fg);
 }
 
-/* ─── Hyprland Desktop Canvas ──────────────────────────────────────── */
+/* ─── Hyprland Desktop Canvas (looknfeel.lua: gaps_out=10, gaps_in=10, rounding=0, border=2) ─── */
 
 .desktop-canvas {
   position: relative;
   z-index: 2;
   flex: 1;
   min-height: 0;
-  padding: 26px 32px;
+  padding: 10px;
   display: flex;
 }
 
+/* Workspace 1 (Default): Airy Omarchy desktop — ~50% unobstructed wallpaper showcase */
 .hypr-grid {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 1.03fr 0.97fr;
-  gap: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px;
   transition: opacity 220ms var(--ease-omarchy), transform 220ms var(--ease-omarchy);
 }
 
-.hypr-right-col {
+.desktop-frame[data-workspace="1"] .hypr-win[data-win="terminal"] {
+  width: min(560px, 44.5%);
+  height: min(350px, 64%);
+  flex-shrink: 0;
+}
+
+.desktop-frame[data-workspace="1"] .hypr-right-col {
+  width: min(465px, 37.5%);
+  height: min(260px, 47.5%);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.desktop-frame[data-workspace="1"] .hypr-win[data-win="editor"] {
+  display: none;
+}
+
+.desktop-frame[data-workspace="1"] .hypr-win[data-win="btop"] {
+  width: 100%;
+  height: 100%;
+}
+
+/* Workspace 2: Full 3-window Hyprland dwindle tiling (gaps_in=10, gaps_out=10) */
+.desktop-frame[data-workspace="2"] .hypr-grid {
+  display: grid;
+  grid-template-columns: 1.03fr 0.97fr;
+  gap: 10px;
+  padding: 0;
+  align-items: stretch;
+}
+
+.desktop-frame[data-workspace="2"] .hypr-right-col {
   display: grid;
   grid-template-rows: 1.12fr 0.88fr;
-  gap: 12px;
+  gap: 10px;
   min-height: 0;
 }
 
-/* Real Omarchy looknfeel.lua: rounding = 0, border_size = 2, shadow = false */
+/* Real Omarchy Hyprland windows: rounding = 0, border_size = 2, shadow = false */
+/* Double-buffered border layers crossfade multi-stop gradients smoothly */
 .hypr-win {
   position: relative;
   padding: 2px;
   border-radius: 0;
-  background: var(--t-inactive-border);
   min-height: 0;
   min-width: 0;
   display: flex;
   cursor: pointer;
-  transition: background 220ms var(--ease-omarchy);
 }
 
-.hypr-win.is-focused {
-  background: var(--t-active-border);
+.hypr-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--theme-dur) var(--ease-omarchy);
+  will-change: opacity;
+}
+
+.hypr-border.is-visible {
+  opacity: 1;
 }
 
 .hypr-win-inner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   min-height: 0;
   min-width: 0;
-  background: color-mix(in srgb, var(--t-bg) 80%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--t-bg) 93%, transparent);
   color: var(--t-fg);
   font-family: var(--font-mono);
   overflow: hidden;
   transition: background-color var(--theme-dur) var(--ease-omarchy), color var(--theme-dur) var(--ease-omarchy);
 }
 
-/* Workspace 2: Focused floating terminal over wide-open wallpaper */
-.desktop-frame[data-workspace="2"] .hypr-grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.desktop-frame[data-workspace="2"] .hypr-right-col {
-  display: none;
-}
-
-.desktop-frame[data-workspace="2"] .hypr-win[data-win="terminal"] {
-  width: min(640px, 68%);
-  height: min(390px, 76%);
-}
-
-/* Workspace 3: Interactive Omarchy Theme Switcher popup */
+/* Workspace 3: Authentic Omarchy [menu] / [launcher] (scrim 50%, opaque card, selected-text=accent) */
 .omarchy-menu-layer {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--t-bg) 50%, transparent);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(6px) scale(0.985);
-  transition: opacity 200ms var(--ease-omarchy), transform 220ms var(--ease-omarchy);
+  transition: opacity 220ms var(--ease-omarchy);
 }
 
 .desktop-frame[data-workspace="3"] .hypr-grid {
   opacity: 0;
   pointer-events: none;
-  transform: scale(0.98);
 }
 
 .desktop-frame[data-workspace="3"] .omarchy-menu-layer {
   opacity: 1;
   pointer-events: auto;
-  transform: none;
 }
 
 .menu-window {
@@ -564,33 +564,40 @@ a:focus-visible {
 }
 
 .menu-inner {
-  background: color-mix(in srgb, var(--t-bg) 92%, transparent);
+  background: color-mix(in srgb, var(--t-bg) 96%, transparent);
   display: flex;
   flex-direction: column;
 }
 
-.menu-header {
+.menu-search {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 10px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--t-fg) 9%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--t-fg) 12%, transparent);
   font-size: 12px;
+}
+
+.menu-prompt {
+  color: var(--t-accent);
+  font-weight: 700;
 }
 
 .menu-crumb {
   color: var(--t-fg-bright);
   font-weight: 600;
+  flex: 1;
 }
 
 .menu-sep {
-  color: var(--t-accent);
-  margin: 0 4px;
+  color: var(--t-muted);
+  margin: 0 3px;
 }
 
 .menu-hint {
   color: var(--t-muted);
   font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
 .menu-list {
@@ -607,10 +614,10 @@ a:focus-visible {
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  border: 0;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--t-fg);
-  padding: 6px 10px;
+  padding: 5px 10px;
   text-align: left;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -618,12 +625,15 @@ a:focus-visible {
 }
 
 .menu-item:hover {
-  background: color-mix(in srgb, var(--t-selection) 65%, transparent);
+  background: color-mix(in srgb, var(--t-fg) 6%, transparent);
 }
 
+/* shell.toml.tpl [menu]: selected-background = fg @ 8%, selected-text = accent */
 .menu-item.is-active {
-  background: var(--t-selection);
-  color: var(--t-fg-bright);
+  background: color-mix(in srgb, var(--t-fg) 8%, transparent);
+  border-color: color-mix(in srgb, var(--t-accent) 35%, transparent);
+  color: var(--t-accent);
+  font-weight: 600;
 }
 
 .menu-item-left {
@@ -642,6 +652,7 @@ a:focus-visible {
 .menu-item-slug {
   color: var(--t-muted);
   font-size: 11px;
+  font-weight: 400;
 }
 
 .menu-item.is-active .menu-item-slug {
@@ -656,15 +667,14 @@ a:focus-visible {
 
 .wallpaper-only-badge {
   position: absolute;
-  right: 16px;
-  bottom: 14px;
+  right: 14px;
+  bottom: 12px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 5px 10px;
-  background: color-mix(in srgb, var(--t-bg) 82%, transparent);
-  backdrop-filter: blur(8px);
-  border: 1px solid color-mix(in srgb, var(--t-fg) 12%, transparent);
+  background: color-mix(in srgb, var(--t-bg) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--t-fg) 14%, transparent);
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--t-fg-light);
@@ -681,20 +691,20 @@ a:focus-visible {
   color: var(--t-fg-dark);
 }
 
-/* ─── Terminal Window ──────────────────────────────────────────────── */
+/* ─── Terminal Window (Ghostty / Alacritty real palette) ───────────── */
 
 .win-terminal {
-  padding: 14px 16px;
+  padding: 13px 15px;
   display: flex;
   flex-direction: column;
-  font-size: 12px;
-  line-height: 1.52;
+  font-size: 11.5px;
+  line-height: 1.48;
 }
 
 .term-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
   min-height: 0;
 }
 
@@ -760,8 +770,8 @@ a:focus-visible {
 
 .eza-row {
   display: grid;
-  grid-template-columns: 78px 38px 30px 92px 1fr;
-  gap: 8px;
+  grid-template-columns: 74px 36px 28px 86px 1fr;
+  gap: 7px;
   white-space: nowrap;
 }
 
@@ -809,18 +819,18 @@ a:focus-visible {
   grid-template-columns: repeat(8, 1fr);
   gap: 4px;
   margin-top: 3px;
-  max-width: 340px;
+  max-width: 320px;
 }
 
 .ansi-cell {
-  height: 16px;
-  border: 1px solid color-mix(in srgb, var(--t-fg) 10%, transparent);
+  height: 15px;
+  border: 1px solid color-mix(in srgb, var(--t-fg) 14%, transparent);
 }
 
 .fetch-grid {
   display: grid;
-  grid-template-columns: 84px 1fr;
-  gap: 1px 10px;
+  grid-template-columns: 78px 1fr;
+  gap: 1px 8px;
   margin-top: 2px;
 }
 
@@ -833,11 +843,16 @@ a:focus-visible {
   color: var(--t-fg-light);
 }
 
+.desktop-frame[data-workspace="1"] .term-block-fetch {
+  display: none;
+}
+
+/* ghostty.conf.tpl: cursor-color = bright_foreground */
 .term-cursor {
   display: inline-block;
   width: 7px;
   height: 13px;
-  background: var(--t-accent);
+  background: var(--t-fg-bright);
   vertical-align: -2px;
   animation: blink 1.15s steps(2, start) infinite;
 }
@@ -865,14 +880,19 @@ a:focus-visible {
 
 .nvim-line {
   display: grid;
-  grid-template-columns: 34px 1fr;
-  padding: 0 12px 0 6px;
+  grid-template-columns: 32px minmax(0, 1fr);
+  padding: 0 10px 0 6px;
   white-space: nowrap;
   overflow: hidden;
 }
 
+.nvim-line-code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .nvim-line.is-cursor {
-  background: color-mix(in srgb, var(--t-selection) 65%, transparent);
+  background: color-mix(in srgb, var(--t-selection) 75%, transparent);
 }
 
 .nvim-ln {
@@ -918,6 +938,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   height: 100%;
+  min-width: 0;
 }
 
 .nvim-mode {
@@ -929,11 +950,15 @@ a:focus-visible {
   color: var(--t-bg-darker);
   font-weight: 700;
   letter-spacing: 0.03em;
+  flex-shrink: 0;
 }
 
 .nvim-file {
   padding: 0 9px;
   color: var(--t-fg-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nvim-meta {
@@ -949,24 +974,25 @@ a:focus-visible {
   background: var(--t-bg-light);
   color: var(--t-yellow);
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
-/* ─── btop Window ──────────────────────────────────────────────────── */
+/* ─── btop Window (matches /usr/share/omarchy/default/themed/btop.theme.tpl) ─── */
 
 .win-btop {
-  padding: 10px 12px;
+  padding: 10px 11px;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 8px;
-  font-size: 10.5px;
+  font-size: 10.2px;
   line-height: 1.38;
   font-variant-numeric: tabular-nums;
 }
 
 .btop-panel {
   position: relative;
-  border: 1px solid color-mix(in srgb, var(--panel-color, var(--t-accent)) 62%, transparent);
-  padding: 8px 10px 7px;
+  border: 1px solid color-mix(in srgb, var(--panel-color) 72%, transparent);
+  padding: 8px 9px 7px;
   min-height: 0;
 }
 
@@ -976,31 +1002,34 @@ a:focus-visible {
   left: 8px;
   padding: 0 5px;
   background: var(--t-bg);
-  color: var(--panel-color, var(--t-accent));
+  color: var(--t-fg);
   font-weight: 700;
   font-size: 10px;
-  letter-spacing: 0.02em;
+}
+
+.btop-panel-title .btop-hi {
+  color: var(--t-accent);
 }
 
 .btop-cpu-row {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .btop-bars {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
+  gap: 2.5px;
   height: 36px;
 }
 
 .btop-bar {
   flex: 1;
   min-width: 3px;
-  background: var(--bar-color, var(--t-cyan));
-  opacity: 0.88;
+  background: var(--bar-color);
+  opacity: 0.9;
 }
 
 .btop-cpu-stats {
@@ -1012,7 +1041,7 @@ a:focus-visible {
 
 .btop-bottom-grid {
   display: grid;
-  grid-template-columns: 0.92fr 1.08fr;
+  grid-template-columns: 0.9fr 1.1fr;
   gap: 8px;
   min-height: 0;
 }
@@ -1029,34 +1058,42 @@ a:focus-visible {
   color: var(--t-fg-light);
 }
 
+/* btop.theme.tpl: meter_bg = selection */
 .btop-meter-track {
   height: 6px;
-  background: var(--t-bg-light);
+  background: var(--t-selection);
   overflow: hidden;
 }
 
 .btop-meter-fill {
   height: 100%;
-  background: var(--meter-color, var(--t-green));
+  background: var(--meter-color);
 }
 
 .btop-procs {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .btop-proc-row {
   display: grid;
-  grid-template-columns: 26px 1fr 44px 34px;
-  gap: 6px;
+  grid-template-columns: 24px 1fr 38px 30px;
+  gap: 5px;
+  padding: 1px 3px;
+}
+
+.btop-proc-row.is-selected {
+  background: var(--t-selection);
+  color: var(--t-accent);
+  font-weight: 600;
 }
 
 .btop-proc-head {
   color: var(--t-muted);
-  border-bottom: 1px solid color-mix(in srgb, var(--t-fg) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--t-muted) 40%, transparent);
   padding-bottom: 2px;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 /* ─── Meta & Palette Strip ─────────────────────────────────────────── */
@@ -1168,6 +1205,11 @@ a:focus-visible {
   font-weight: 600;
 }
 
+.palette-readout .failed-tag {
+  color: var(--t-red);
+  font-weight: 600;
+}
+
 .palette-swatches {
   display: flex;
   align-items: center;
@@ -1193,7 +1235,7 @@ a:focus-visible {
   width: 30px;
 }
 
-/* ─── Bottom 13-Theme Rail ─────────────────────────────────────────── */
+/* ─── Bottom Theme Rail ────────────────────────────────────────────── */
 
 .rail-section {
   flex-shrink: 0;
@@ -1201,7 +1243,7 @@ a:focus-visible {
 
 .theme-rail {
   display: grid;
-  grid-template-columns: repeat(13, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--theme-count, 13), minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -1235,7 +1277,7 @@ a:focus-visible {
   aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
-  background: #060609;
+  background: var(--t-bg-darker);
 }
 
 .theme-card-stripe {
@@ -1366,39 +1408,35 @@ a:focus-visible {
     min-width: auto;
   }
 
-  .tray-stat {
-    display: none;
-  }
-
   .desktop-canvas {
     padding: 12px;
   }
 
-  /* On phone, each workspace shows one crisp readable window over the wallpaper */
-  .hypr-grid {
-    display: block;
+  /* On phone, each workspace shows one crisp readable window with generous top wallpaper peek */
+  .hypr-grid,
+  .desktop-frame[data-workspace="1"] .hypr-grid,
+  .desktop-frame[data-workspace="2"] .hypr-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
   }
 
-  .hypr-right-col {
+  .desktop-frame[data-workspace="1"] .hypr-right-col,
+  .desktop-frame[data-workspace="2"] .hypr-right-col {
     display: contents;
+    width: auto;
+    height: auto;
   }
 
-  .hypr-win {
+  .desktop-frame[data-workspace="1"] .hypr-win[data-win="terminal"] {
     width: 100%;
-    height: 100%;
+    height: 86%;
   }
 
   .desktop-frame[data-workspace="1"] .hypr-win[data-win="editor"],
   .desktop-frame[data-workspace="1"] .hypr-win[data-win="btop"] {
     display: none;
-  }
-
-  .desktop-frame[data-workspace="2"] .hypr-grid {
-    display: block;
-  }
-
-  .desktop-frame[data-workspace="2"] .hypr-right-col {
-    display: contents;
   }
 
   .desktop-frame[data-workspace="2"] .hypr-win[data-win="terminal"],
@@ -1409,14 +1447,21 @@ a:focus-visible {
   .desktop-frame[data-workspace="2"] .hypr-win[data-win="editor"] {
     display: flex;
     width: 100%;
-    height: 100%;
-    background: var(--t-active-border);
+    height: 88%;
+  }
+
+  .nvim-line:nth-child(n+13) {
+    display: none;
   }
 
   .win-terminal {
-    padding: 10px 12px;
-    font-size: 10.8px;
-    line-height: 1.44;
+    padding: 9px 11px;
+    font-size: 10.5px;
+    line-height: 1.4;
+  }
+
+  .term-body {
+    gap: 6px;
   }
 
   .term-block-fetch {
@@ -1424,7 +1469,8 @@ a:focus-visible {
   }
 
   .eza-row {
-    grid-template-columns: 68px 34px 1fr;
+    grid-template-columns: 64px 32px 1fr;
+    gap: 6px;
   }
 
   .eza-user,
@@ -1432,17 +1478,47 @@ a:focus-visible {
     display: none;
   }
 
+  .ansi-cell {
+    height: 13px;
+  }
+
   .win-editor {
-    font-size: 11px;
+    font-size: 10.5px;
+    line-height: 1.42;
+  }
+
+  .nvim-code {
+    padding: 7px 0 4px;
   }
 
   .nvim-meta {
     display: none;
   }
 
+  .omarchy-menu-layer {
+    padding: 12px;
+  }
+
   .menu-window {
     width: 100%;
+    height: 100%;
     max-height: 100%;
+  }
+
+  .menu-search {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .menu-list {
+    padding: 4px 6px 10px;
+    -webkit-mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+  }
+
+  .menu-item {
+    padding: 5px 8px;
+    font-size: 11px;
   }
 
   .meta-strip {

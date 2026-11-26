@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -180,6 +180,13 @@ function parseHyprColorToken(token: string): string | null {
   return null;
 }
 
+function hyprAngleToCss(angleDeg: number | null): number {
+  // Hyprland measures angles counterclockwise from +X (0deg = right, 45deg = up-right, 135deg = up-left).
+  // CSS linear-gradient measures clockwise from +Y (0deg = up, 45deg = up-right, 90deg = right, 315deg = up-left).
+  const hypr = angleDeg ?? 45;
+  return (((90 - hypr) % 360) + 360) % 360;
+}
+
 function parseHyprlandBorder(rawValue: string | undefined, fallbackColor: string): ParsedBorder {
   if (!rawValue || !rawValue.trim()) {
     return {
@@ -223,8 +230,7 @@ function parseHyprlandBorder(rawValue: string | undefined, fallbackColor: string
     };
   }
 
-  // Hyprland's 0deg runs left-to-right; CSS linear-gradient 90deg runs left-to-right.
-  const cssAngle = angleDeg === null ? 135 : angleDeg === 0 ? 90 : angleDeg;
+  const cssAngle = hyprAngleToCss(angleDeg);
   return {
     raw: rawValue,
     css: `linear-gradient(${cssAngle}deg, ${colors.join(", ")})`,
@@ -314,13 +320,31 @@ function formatBytes(bytes: number): string {
   return `${bytes}`;
 }
 
-function formatShortDate(mtime: Date): string {
+function formatShortDate(date: Date): string {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const day = String(mtime.getDate()).padStart(2, " ");
-  const mon = months[mtime.getMonth()] ?? "Nov";
-  const hh = String(mtime.getHours()).padStart(2, "0");
-  const mm = String(mtime.getMinutes()).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, " ");
+  const mon = months[date.getUTCMonth()] ?? "Nov";
+  const hh = String(date.getUTCHours()).padStart(2, "0");
+  const mm = String(date.getUTCMinutes()).padStart(2, "0");
   return `${day} ${mon} ${hh}:${mm}`;
+}
+
+function getGitFileDate(absPath: string, fallback: Date): Date {
+  try {
+    const rel = path.relative(ROOT, absPath);
+    const out = execFileSync("git", ["log", "-1", "--format=%ct", "--", rel], {
+      cwd: ROOT,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    const epoch = Number(out);
+    if (Number.isFinite(epoch) && epoch > 0) {
+      return new Date(epoch * 1000);
+    }
+  } catch {
+    // fallback to filesystem mtime
+  }
+  return fallback;
 }
 
 function readThemeFiles(themeDir: string): RepoFileEntry[] {
@@ -333,12 +357,14 @@ function readThemeFiles(themeDir: string): RepoFileEntry[] {
     });
 
   return entries.map((entry) => {
-    const stat = fs.statSync(path.join(themeDir, entry.name));
+    const full = path.join(themeDir, entry.name);
+    const stat = fs.statSync(full);
+    const commitDate = getGitFileDate(full, stat.mtime);
     return {
       name: entry.isDirectory() ? `${entry.name}/` : entry.name,
       size: entry.isDirectory() ? "-" : formatBytes(stat.size),
       isDir: entry.isDirectory(),
-      date: formatShortDate(stat.mtime),
+      date: formatShortDate(commitDate),
     };
   });
 }
@@ -365,8 +391,20 @@ function buildTomlExcerpt(raw: string): string[] {
   for (const line of raw.split(/\r?\n/)) {
     const t = line.trim();
     if (!t) continue;
-    if (t.startsWith("# Surfaces") || t.startsWith("# Text") || t.startsWith("# Accent") || t.startsWith("# Window")) {
-      out.push(t);
+    if (t.startsWith("# Surfaces")) {
+      out.push("# Surfaces");
+      continue;
+    }
+    if (t.startsWith("# Text")) {
+      out.push("# Text");
+      continue;
+    }
+    if (t.startsWith("# Accent")) {
+      out.push("# Accent & ANSI");
+      continue;
+    }
+    if (t.startsWith("# Window")) {
+      out.push("# Window borders");
       continue;
     }
     const eq = t.indexOf("=");
@@ -443,6 +481,56 @@ function escapeJsonForScript(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
 }
 
+function escapeHtmlAttr(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function buildInitialThemeCssVars(theme: ThemeRecord): string {
+  const c = theme.colors;
+  const pairs: ReadonlyArray<[string, string]> = [
+    ["--t-bg", c.background],
+    ["--t-bg-dark", c.dark_background],
+    ["--t-bg-darker", c.darker_background],
+    ["--t-bg-light", c.lighter_background],
+    ["--t-selection", c.selection],
+    ["--t-fg", c.foreground],
+    ["--t-fg-light", c.light_foreground],
+    ["--t-fg-bright", c.bright_foreground],
+    ["--t-fg-dark", c.dark_foreground],
+    ["--t-muted", c.muted],
+    ["--t-accent", c.accent],
+    ["--t-red", c.red],
+    ["--t-yellow", c.yellow],
+    ["--t-orange", c.orange],
+    ["--t-green", c.green],
+    ["--t-cyan", c.cyan],
+    ["--t-blue", c.blue],
+    ["--t-magenta", c.magenta],
+    ["--t-brown", c.brown],
+    ["--t-bright-red", c.bright_red],
+    ["--t-bright-yellow", c.bright_yellow],
+    ["--t-bright-green", c.bright_green],
+    ["--t-bright-cyan", c.bright_cyan],
+    ["--t-bright-blue", c.bright_blue],
+    ["--t-bright-magenta", c.bright_magenta],
+    ["--t-active-border", theme.activeBorder.css],
+    ["--t-inactive-border", theme.inactiveBorder.css],
+  ];
+  return pairs.map(([k, v]) => `  ${k}: ${v};`).join("\n");
+}
+
+function buildFaviconDataUri(theme: ThemeRecord): string {
+  const bg = encodeURIComponent(theme.colors.background);
+  const accent = encodeURIComponent(theme.colors.accent);
+  const second = encodeURIComponent(theme.activeBorder.colors[1] ?? theme.colors.cyan);
+  return (
+    `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E` +
+    `%3Crect width='32' height='32' fill='${bg}'/%3E` +
+    `%3Crect x='5' y='5' width='22' height='22' fill='none' stroke='${accent}' stroke-width='2.5'/%3E` +
+    `%3Crect x='11' y='11' width='10' height='10' fill='${second}'/%3E%3C/svg%3E`
+  );
+}
+
 function compileClientTs(): string {
   const appTsPath = path.join(TRYON_DIR, "app.ts");
   const source = fs.readFileSync(appTsPath, "utf8");
@@ -459,14 +547,24 @@ function compileClientTs(): string {
 
 function assembleHtml(
   template: string,
-  css: string,
+  rawCss: string,
   js: string,
   themes: ThemeRecord[],
   buildInfo: { count: number; mode: "site" | "bundle" }
 ): string {
+  const first = themes[0]!;
+  const css = rawCss.replace("/*__INITIAL_THEME_VARS__*/", () => buildInitialThemeCssVars(first));
   const payload = escapeJsonForScript({ themes, buildInfo });
+  const countStr = String(themes.length);
+  const counterStr = `01 / ${String(themes.length).padStart(2, "0")}`;
+
   return template
+    .replace("/*__INITIAL_FAVICON__*/", () => escapeHtmlAttr(buildFaviconDataUri(first)))
     .replace("/*__STYLES__*/", () => css)
+    .replaceAll("__THEME_COUNT__", countStr)
+    .replaceAll("__INITIAL_COUNTER__", counterStr)
+    .replaceAll("__INITIAL_NAME__", escapeHtmlAttr(first.name))
+    .replaceAll("__INITIAL_SLUG__", escapeHtmlAttr(first.slug))
     .replace("/*__DATA__*/", () => `window.__SEBTHEMES_DATA__ = ${payload};`)
     .replace("/*__SCRIPT__*/", () => js);
 }
@@ -489,7 +587,7 @@ async function main(): Promise<void> {
   interface ImageTask {
     src: string;
     cachePath: string;
-    sitePath: string;
+    sitePath: string | null;
     w: number;
     h: number;
     q: number;
@@ -497,7 +595,7 @@ async function main(): Promise<void> {
 
   const imageTasks: ImageTask[] = [];
   const siteThemes: ThemeRecord[] = [];
-  const bundleImageSources = new Map<string, string>(); // siteRel -> cachePath
+  const bundleImageSources = new Map<string, string>(); // siteRel -> cachePath (compact WebP for single-file bundle)
 
   for (const slug of themeDirs) {
     const themeDir = path.join(THEMES_DIR, slug);
@@ -557,17 +655,30 @@ async function main(): Promise<void> {
     const wallpapers: WallpaperEntry[] = bgFiles.map((filename, index) => {
       const stem = filename.replace(/\.[^.]+$/, "");
       const siteRel = `wallpapers/${slug}/${stem}.webp`;
-      const cachePath = path.join(CACHE_DIR, "wallpapers", slug, `${stem}.webp`);
+      const cacheFull = path.join(CACHE_DIR, "wallpapers-2560", slug, `${stem}.webp`);
       const sitePath = path.join(SITE_DIR, siteRel);
       imageTasks.push({
         src: path.join(bgDir, filename),
-        cachePath,
+        cachePath: cacheFull,
         sitePath,
-        w: 1440,
-        h: 810,
-        q: 82,
+        w: 2560,
+        h: 1440,
+        q: 84,
       });
-      bundleImageSources.set(siteRel, cachePath);
+
+      if (wantBundle) {
+        const cacheCompact = path.join(CACHE_DIR, "wallpapers-1440", slug, `${stem}.webp`);
+        imageTasks.push({
+          src: path.join(bgDir, filename),
+          cachePath: cacheCompact,
+          sitePath: null,
+          w: 1440,
+          h: 810,
+          q: 82,
+        });
+        bundleImageSources.set(siteRel, cacheCompact);
+      }
+
       return {
         filename,
         label: String(index + 1),
@@ -583,9 +694,9 @@ async function main(): Promise<void> {
       src: path.join(bgDir, firstBg),
       cachePath: thumbCache,
       sitePath: thumbSite,
-      w: 320,
-      h: 180,
-      q: 76,
+      w: 360,
+      h: 202,
+      q: 78,
     });
     bundleImageSources.set(thumbRel, thumbCache);
 
@@ -610,11 +721,12 @@ async function main(): Promise<void> {
     });
   }
 
-  // Generate cached WebPs in parallel, then copy into site/
   await runPool(imageTasks, 6, async (task) => {
     await ensureWebp(task.src, task.cachePath, task.w, task.h, task.q);
-    fs.mkdirSync(path.dirname(task.sitePath), { recursive: true });
-    fs.copyFileSync(task.cachePath, task.sitePath);
+    if (task.sitePath) {
+      fs.mkdirSync(path.dirname(task.sitePath), { recursive: true });
+      fs.copyFileSync(task.cachePath, task.sitePath);
+    }
   });
 
   const template = fs.readFileSync(path.join(TRYON_DIR, "template.html"), "utf8");
@@ -629,7 +741,7 @@ async function main(): Promise<void> {
   fs.writeFileSync(path.join(SITE_DIR, "index.html"), siteHtml, "utf8");
   fs.writeFileSync(path.join(SITE_DIR, "themes.json"), JSON.stringify(siteThemes, null, 2), "utf8");
 
-  console.log(`Built site/ (${siteThemes.length} themes, ${imageTasks.length} WebP assets)`);
+  console.log(`Built site/ (${siteThemes.length} themes, ${siteThemes.reduce((n, t) => n + t.wallpapers.length, 0)} 2560px WebP wallpapers)`);
 
   if (wantBundle) {
     const toDataUri = (rel: string): string => {

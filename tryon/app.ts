@@ -89,6 +89,7 @@ type FocusedWindow = "terminal" | "editor" | "btop";
   const themes = bootstrap.themes;
   const INSTALL_URL = "https://raw.githubusercontent.com/ikkeseb/sebthemes/main/install.sh";
   const REPO_URL = "https://github.com/ikkeseb/sebthemes";
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const SWATCH_SPEC: ReadonlyArray<{ key: keyof ThemeColors; label: string; isAccent?: boolean }> = [
     { key: "darker_background", label: "darker" },
@@ -107,7 +108,7 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     { key: "magenta", label: "magenta" },
   ];
 
-  const CPU_BARS = [16, 22, 18, 28, 34, 26, 42, 51, 38, 29, 36, 46, 58, 44, 31, 27, 39, 48, 35, 24, 30, 26, 22, 24];
+  const CPU_BARS = [16, 22, 18, 28, 34, 26, 42, 54, 40, 29, 36, 48, 62, 46, 31, 27, 39, 52, 35, 24, 30, 26, 22, 24];
 
   const byId = <T extends HTMLElement>(id: string): T => {
     const el = document.getElementById(id);
@@ -154,6 +155,11 @@ type FocusedWindow = "terminal" | "editor" | "btop";
   let copyTimer: number | undefined;
   let swatchCopyTimer: number | undefined;
   const preloadedUrls = new Set<string>();
+  const borderLayerState = new WeakMap<HTMLElement, { active: "a" | "b"; css: string }>();
+
+  function prefersReducedMotion(): boolean {
+    return reducedMotionQuery.matches;
+  }
 
   function escapeHtml(text: string): string {
     return text
@@ -206,9 +212,49 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     return `<span class="cmd-muted">curl -fsSL</span> ${INSTALL_URL} <span class="cmd-muted">| bash -s</span> <span class="cmd-accent">${escapeHtml(theme.slug)}</span>`;
   }
 
+  function setWindowBorder(winEl: HTMLElement, cssBg: string, instant: boolean): void {
+    const layerA = winEl.querySelector<HTMLElement>(".hypr-border-a");
+    const layerB = winEl.querySelector<HTMLElement>(".hypr-border-b");
+    if (!layerA || !layerB) return;
+
+    const prev = borderLayerState.get(winEl);
+    if (!prev || instant || prefersReducedMotion()) {
+      layerA.style.background = cssBg;
+      layerA.classList.add("is-visible");
+      layerB.classList.remove("is-visible");
+      borderLayerState.set(winEl, { active: "a", css: cssBg });
+      return;
+    }
+
+    if (prev.css === cssBg) return;
+
+    const nextActive = prev.active === "a" ? "b" : "a";
+    const incoming = nextActive === "a" ? layerA : layerB;
+    const outgoing = nextActive === "a" ? layerB : layerA;
+    incoming.style.background = cssBg;
+    incoming.classList.add("is-visible");
+    outgoing.classList.remove("is-visible");
+    borderLayerState.set(winEl, { active: nextActive, css: cssBg });
+  }
+
+  function syncAllWindowBorders(theme: ThemeRecord, instant: boolean): void {
+    const isMobile = window.innerWidth <= 760;
+    desktopFrame.querySelectorAll<HTMLElement>(".hypr-win[data-win]").forEach((winEl) => {
+      const kind = winEl.dataset.win;
+      const isFocused =
+        kind === "menu" ||
+        (isMobile && ((activeWorkspace === 1 && kind === "terminal") || (activeWorkspace === 2 && kind === "editor"))) ||
+        kind === focusedWindow;
+      winEl.classList.toggle("is-focused", isFocused);
+      const borderCss = isFocused ? theme.activeBorder.css : theme.inactiveBorder.css;
+      setWindowBorder(winEl, borderCss, instant);
+    });
+  }
+
   function applyThemeVars(theme: ThemeRecord): void {
     const root = document.documentElement.style;
     const c = theme.colors;
+    root.setProperty("--theme-count", String(themes.length));
     root.setProperty("--t-bg", c.background);
     root.setProperty("--t-bg-dark", c.dark_background);
     root.setProperty("--t-bg-darker", c.darker_background);
@@ -253,7 +299,7 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     const incoming = activeWpLayer === "a" ? wpImgB : wpImgA;
     const outgoing = activeWpLayer === "a" ? wpImgA : wpImgB;
 
-    if (instant || !outgoing.getAttribute("src")) {
+    if (instant || prefersReducedMotion() || !outgoing.getAttribute("src")) {
       outgoing.src = src;
       outgoing.classList.add("is-visible");
       incoming.classList.remove("is-visible");
@@ -320,8 +366,9 @@ type FocusedWindow = "terminal" | "editor" | "btop";
       })
       .join("");
 
+    // Exact Omarchy Ghostty/Alacritty mapping: palette 0 = background, palette 8 = muted
     const ansiColors = [
-      c.lighter_background, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.foreground,
+      c.background, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.foreground,
       c.muted, c.bright_red, c.bright_green, c.bright_yellow, c.bright_blue, c.bright_magenta, c.bright_cyan, c.bright_foreground,
     ];
     const ansiCells = ansiColors
@@ -394,7 +441,7 @@ type FocusedWindow = "terminal" | "editor" | "btop";
         const lineNum = i + 1;
         const isCursor = line.startsWith("accent ");
         if (line.startsWith("#")) {
-          return `<div class="nvim-line"><span class="nvim-ln">${lineNum}</span><span class="tok-comment">${escapeHtml(line)}</span></div>`;
+          return `<div class="nvim-line"><span class="nvim-ln">${lineNum}</span><span class="nvim-line-code tok-comment">${escapeHtml(line)}</span></div>`;
         }
         const eq = line.indexOf("=");
         const key = line.slice(0, eq).trim();
@@ -406,7 +453,7 @@ type FocusedWindow = "terminal" | "editor" | "btop";
         return (
           `<div class="nvim-line${isCursor ? " is-cursor" : ""}">` +
           `<span class="nvim-ln">${lineNum}</span>` +
-          `<span><span class="tok-key">${escapeHtml(key)}</span> <span class="tok-eq">=</span> ${chip}<span class="tok-str">${escapeHtml(val)}</span></span>` +
+          `<span class="nvim-line-code"><span class="tok-key">${escapeHtml(key)}</span> <span class="tok-eq">=</span> ${chip}<span class="tok-str">${escapeHtml(val)}</span></span>` +
           `</div>`
         );
       })
@@ -420,21 +467,24 @@ type FocusedWindow = "terminal" | "editor" | "btop";
       </div>
       <div class="nvim-sl-right">
         <span class="nvim-meta">toml</span>
-        <span class="nvim-pos">${theme.contrast.foreground}:1</span>
+        <span class="nvim-pos">${theme.contrast.foreground.toFixed(1)}:1</span>
       </div>
     `;
   }
 
   function renderBtop(theme: ThemeRecord): void {
+    // Exact Omarchy btop.theme.tpl tokens:
+    // cpu_box=magenta, mem_box=green, proc_box=accent, cpu=cyan->blue->magenta,
+    // used=green->cyan->blue, cached=blue->cyan->magenta, selected=selection/accent
     const c = theme.colors;
-    const barsHtml = CPU_BARS.map((pct, idx) => {
-      const col = pct > 48 ? c.magenta : pct > 36 ? c.accent : idx % 3 === 0 ? c.cyan : c.blue;
+    const barsHtml = CPU_BARS.map((pct) => {
+      const col = pct >= 48 ? c.magenta : pct >= 32 ? c.blue : c.cyan;
       return `<span class="btop-bar" style="height:${pct}%;--bar-color:${col}"></span>`;
     }).join("");
 
     btopBodyEl.innerHTML = `
-      <div class="btop-panel" style="--panel-color:${c.accent}">
-        <span class="btop-panel-title">cpu</span>
+      <div class="btop-panel" style="--panel-color:${c.magenta}">
+        <span class="btop-panel-title"><span class="btop-hi">1</span>cpu</span>
         <div class="btop-cpu-row">
           <div class="btop-bars">${barsHtml}</div>
           <div class="btop-cpu-stats">
@@ -447,25 +497,25 @@ type FocusedWindow = "terminal" | "editor" | "btop";
 
       <div class="btop-bottom-grid">
         <div class="btop-panel" style="--panel-color:${c.green}">
-          <span class="btop-panel-title">mem</span>
+          <span class="btop-panel-title"><span class="btop-hi">2</span>mem</span>
           <div class="btop-meter-row">
             <div class="btop-meter-head"><span>Used</span><span style="color:${c.green}">12.4 GiB</span></div>
-            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:40%;--meter-color:${c.green}"></div></div>
+            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:40%;--meter-color:linear-gradient(90deg, ${c.green}, ${c.cyan})"></div></div>
             <div class="btop-meter-head" style="margin-top:4px"><span>Cache</span><span style="color:${c.cyan}">6.8 GiB</span></div>
-            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:22%;--meter-color:${c.cyan}"></div></div>
-            <div class="btop-meter-head" style="margin-top:4px"><span>VRAM</span><span style="color:${c.magenta}">2.1 GiB</span></div>
-            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:14%;--meter-color:${c.magenta}"></div></div>
+            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:22%;--meter-color:linear-gradient(90deg, ${c.blue}, ${c.cyan})"></div></div>
+            <div class="btop-meter-head" style="margin-top:4px"><span>Avail</span><span style="color:${c.yellow}">19.6 GiB</span></div>
+            <div class="btop-meter-track"><div class="btop-meter-fill" style="width:60%;--meter-color:linear-gradient(90deg, ${c.yellow}, ${c.red})"></div></div>
           </div>
         </div>
 
-        <div class="btop-panel" style="--panel-color:${c.blue}">
-          <span class="btop-panel-title">proc</span>
+        <div class="btop-panel" style="--panel-color:${c.accent}">
+          <span class="btop-panel-title"><span class="btop-hi">4</span>proc</span>
           <div class="btop-procs">
             <div class="btop-proc-row btop-proc-head"><span>pid</span><span>program</span><span>mem</span><span>cpu</span></div>
-            <div class="btop-proc-row"><span style="color:${c.muted}">412</span><span style="color:${c.accent}">hyprland</span><span>94M</span><span style="color:${c.green}">1.4</span></div>
-            <div class="btop-proc-row"><span style="color:${c.muted}">608</span><span style="color:${c.bright_foreground}">ghostty</span><span>68M</span><span style="color:${c.cyan}">0.8</span></div>
-            <div class="btop-proc-row"><span style="color:${c.muted}">719</span><span style="color:${c.yellow}">nvim</span><span>42M</span><span style="color:${c.muted}">0.2</span></div>
-            <div class="btop-proc-row"><span style="color:${c.muted}">844</span><span style="color:${c.magenta}">btop</span><span>14M</span><span style="color:${c.muted}">0.4</span></div>
+            <div class="btop-proc-row is-selected"><span>412</span><span>hyprland</span><span>94M</span><span>1.4</span></div>
+            <div class="btop-proc-row"><span style="color:${c.muted}">608</span><span style="color:${c.foreground}">ghostty</span><span style="color:${c.light_foreground}">68M</span><span style="color:${c.cyan}">0.8</span></div>
+            <div class="btop-proc-row"><span style="color:${c.muted}">719</span><span style="color:${c.foreground}">nvim</span><span style="color:${c.light_foreground}">42M</span><span style="color:${c.blue}">0.2</span></div>
+            <div class="btop-proc-row"><span style="color:${c.muted}">844</span><span style="color:${c.foreground}">btop</span><span style="color:${c.light_foreground}">14M</span><span style="color:${c.magenta}">0.4</span></div>
           </div>
         </div>
       </div>
@@ -486,12 +536,23 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     wpSwitcherEl.innerHTML = `<span class="wp-label">Wallpaper</span>${buttons}`;
   }
 
-  function setPaletteReadout(label: string, hex: string, bgHex: string, copied = false): void {
+  function setPaletteReadout(
+    label: string,
+    hex: string,
+    bgHex: string,
+    status: "idle" | "copied" | "failed" = "idle"
+  ): void {
     const ratio = contrastOnBg(hex, bgHex).toFixed(1);
     const ratioText = label === "bg" ? "surface" : `${ratio}:1`;
-    paletteReadoutEl.innerHTML = copied
-      ? `<strong>${escapeHtml(label)}</strong> ${escapeHtml(hex)} <span class="copied-tag">· Copied</span>`
-      : `<strong>${escapeHtml(label)}</strong> ${escapeHtml(hex)} · ${ratioText}`;
+    if (status === "copied") {
+      paletteReadoutEl.innerHTML = `<strong>${escapeHtml(label)}</strong> ${escapeHtml(hex)} <span class="copied-tag">· Copied</span>`;
+      return;
+    }
+    if (status === "failed") {
+      paletteReadoutEl.innerHTML = `<strong>${escapeHtml(label)}</strong> ${escapeHtml(hex)} <span class="failed-tag">· Copy failed</span>`;
+      return;
+    }
+    paletteReadoutEl.innerHTML = `<strong>${escapeHtml(label)}</strong> ${escapeHtml(hex)} · ${ratioText}`;
   }
 
   function renderPaletteSwatches(theme: ThemeRecord): void {
@@ -518,7 +579,11 @@ type FocusedWindow = "terminal" | "editor" | "btop";
       card.classList.toggle("is-active", active);
       card.setAttribute("aria-selected", String(active));
       if (active && window.innerWidth <= 1180) {
-        card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        card.scrollIntoView({
+          behavior: prefersReducedMotion() ? "auto" : "smooth",
+          block: "nearest",
+          inline: "center",
+        });
       }
     });
 
@@ -540,12 +605,14 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     const theme = themes[normalized];
     if (!theme) return;
 
+    const instant = Boolean(opts?.instant);
     activeIndex = normalized;
     wallpaperIndex = 0;
 
     applyThemeVars(theme);
+    syncAllWindowBorders(theme, instant);
     const wp = theme.wallpapers[0]!;
-    showWallpaper(wp.src, Boolean(opts?.instant));
+    showWallpaper(wp.src, instant);
     preloadNeighbors(normalized);
 
     themeCounterEl.textContent = `${String(normalized + 1).padStart(2, "0")} / ${String(themes.length).padStart(2, "0")}`;
@@ -591,14 +658,15 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     menuLayer.setAttribute("aria-hidden", String(ws !== 3));
     const badge = byId<HTMLElement>("wallpaper-only-badge");
     badge.setAttribute("aria-hidden", String(ws !== 4));
+    const theme = themes[activeIndex];
+    if (theme) syncAllWindowBorders(theme, false);
   }
 
   function setFocusedWindow(win: FocusedWindow): void {
     focusedWindow = win;
     desktopFrame.dataset.focused = win;
-    desktopFrame.querySelectorAll<HTMLElement>(".hypr-win[data-win]").forEach((el) => {
-      el.classList.toggle("is-focused", el.dataset.win === win);
-    });
+    const theme = themes[activeIndex];
+    if (theme) syncAllWindowBorders(theme, false);
   }
 
   function setInstallMode(mode: InstallMode): void {
@@ -613,45 +681,68 @@ type FocusedWindow = "terminal" | "editor" | "btop";
   }
 
   async function copyText(text: string): Promise<boolean> {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      let ok = false;
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
       try {
-        ok = document.execCommand("copy");
+        await navigator.clipboard.writeText(text);
+        return true;
       } catch {
-        ok = false;
+        // fall through to execCommand fallback
       }
-      document.body.removeChild(ta);
-      return ok;
     }
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function selectElementText(el: HTMLElement): void {
+    const sel = window.getSelection();
+    if (!sel) return;
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 
   async function triggerInstallCopy(): Promise<void> {
     const theme = themes[activeIndex];
     if (!theme) return;
     const cmd = getInstallCommand(theme, installMode);
-    await copyText(cmd);
+    const ok = await copyText(cmd);
 
-    copyInstallBtn.classList.add("is-copied");
-    copyInstallLabel.textContent = "Copied";
-    mobileCopyBtn.classList.add("is-copied");
-    mobileCopyLabel.textContent = "Copied to clipboard";
+    copyInstallBtn.classList.remove("is-copied", "is-failed");
+    mobileCopyBtn.classList.remove("is-copied", "is-failed");
+
+    if (ok) {
+      copyInstallBtn.classList.add("is-copied");
+      copyInstallLabel.textContent = "Copied";
+      mobileCopyBtn.classList.add("is-copied");
+      mobileCopyLabel.textContent = "Copied to clipboard";
+    } else {
+      copyInstallBtn.classList.add("is-failed");
+      copyInstallLabel.textContent = "Copy failed";
+      mobileCopyBtn.classList.add("is-failed");
+      mobileCopyLabel.textContent = "Copy failed — select above";
+      selectElementText(window.innerWidth <= 760 ? mobileInstallCmdEl : installCmdEl);
+    }
 
     window.clearTimeout(copyTimer);
     copyTimer = window.setTimeout(() => {
-      copyInstallBtn.classList.remove("is-copied");
+      copyInstallBtn.classList.remove("is-copied", "is-failed");
       copyInstallLabel.textContent = "Copy";
-      mobileCopyBtn.classList.remove("is-copied");
+      mobileCopyBtn.classList.remove("is-copied", "is-failed");
       mobileCopyLabel.textContent = "Copy install command";
-    }, 1800);
+    }, 2000);
   }
 
   function updateClock(): void {
@@ -666,6 +757,10 @@ type FocusedWindow = "terminal" | "editor" | "btop";
   }
 
   function buildStaticLists(): void {
+    document.querySelectorAll<HTMLElement>("[data-all-count]").forEach((el) => {
+      el.textContent = `All ${themes.length}`;
+    });
+
     themeRailEl.innerHTML = themes
       .map(
         (t, idx) => `
@@ -730,13 +825,18 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-swatch-hex]");
     const theme = themes[activeIndex];
     if (!btn || !theme || !btn.dataset.swatchLabel || !btn.dataset.swatchHex) return;
-    await copyText(btn.dataset.swatchHex);
-    setPaletteReadout(btn.dataset.swatchLabel, btn.dataset.swatchHex, theme.colors.background, true);
+    const ok = await copyText(btn.dataset.swatchHex);
+    setPaletteReadout(
+      btn.dataset.swatchLabel,
+      btn.dataset.swatchHex,
+      theme.colors.background,
+      ok ? "copied" : "failed"
+    );
     window.clearTimeout(swatchCopyTimer);
     swatchCopyTimer = window.setTimeout(() => {
       const current = themes[activeIndex];
       if (current) setPaletteReadout("accent", current.colors.accent, current.colors.background);
-    }, 1600);
+    }, 1800);
   });
 
   desktopFrame.addEventListener("click", (e) => {
@@ -747,11 +847,48 @@ type FocusedWindow = "terminal" | "editor" | "btop";
       return;
     }
     const winEl = target.closest<HTMLElement>(".hypr-win[data-win]");
-    if (winEl && winEl.dataset.win) {
+    if (winEl && winEl.dataset.win && winEl.dataset.win !== "menu") {
       const w = winEl.dataset.win as FocusedWindow;
       if (w !== focusedWindow) setFocusedWindow(w);
     }
   });
+
+  // Phone touch swipe on desktop preview to step between themes
+  let touchStartX: number | null = null;
+  let touchStartY: number | null = null;
+
+  desktopFrame.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    },
+    { passive: true }
+  );
+
+  desktopFrame.addEventListener(
+    "touchend",
+    (e) => {
+      if (touchStartX === null || touchStartY === null) return;
+      const touch = e.changedTouches[0];
+      const startX = touchStartX;
+      const startY = touchStartY;
+      touchStartX = null;
+      touchStartY = null;
+      if (!touch) return;
+
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      if (Math.abs(dx) >= 44 && Math.abs(dx) > Math.abs(dy) * 1.35) {
+        if (dx < 0) selectTheme(activeIndex + 1);
+        else selectTheme(activeIndex - 1);
+      }
+    },
+    { passive: true }
+  );
 
   document.querySelectorAll<HTMLButtonElement>("[data-install-mode]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -773,10 +910,29 @@ type FocusedWindow = "terminal" | "editor" | "btop";
   prevThemeBtn.addEventListener("click", () => selectTheme(activeIndex - 1));
   nextThemeBtn.addEventListener("click", () => selectTheme(activeIndex + 1));
 
+  // Keyboard navigation — respects focused interactive controls
   window.addEventListener("keydown", (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    const tag = (e.target as HTMLElement | null)?.tagName;
-    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    const activeEl = document.activeElement as HTMLElement | null;
+    if (activeEl) {
+      const tag = activeEl.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || activeEl.isContentEditable) {
+        return;
+      }
+      // Let tablist, non-rail buttons, and links keep native keyboard behavior
+      if (activeEl.closest('[role="tablist"]')) {
+        return;
+      }
+      const isControl = tag === "BUTTON" || tag === "A";
+      const isThemeStepper =
+        activeEl.classList.contains("theme-card") ||
+        activeEl.classList.contains("menu-item") ||
+        activeEl.id === "prev-theme-btn" ||
+        activeEl.id === "next-theme-btn";
+      if (isControl && !isThemeStepper) {
+        return;
+      }
+    }
 
     if (e.key === "ArrowRight" || e.key === "l") {
       e.preventDefault();
@@ -791,6 +947,11 @@ type FocusedWindow = "terminal" | "editor" | "btop";
     } else if (e.key === "c" || e.key === "C") {
       void triggerInstallCopy();
     }
+  });
+
+  window.addEventListener("resize", () => {
+    const theme = themes[activeIndex];
+    if (theme) syncAllWindowBorders(theme, true);
   });
 
   window.addEventListener("hashchange", () => {
